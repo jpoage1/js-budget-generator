@@ -1,8 +1,13 @@
 <html>
 <head>
     <title>Budget and Goal Generator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="reset.css" />
-    <link rel="stylesheet" type="text/css" href="google-fonts.css" />
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Jaldi|Roboto+Slab&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
     <script type="text/javascript">
     <!--
@@ -73,6 +78,14 @@
             .join('\n');
             document.getElementById(id).innerHTML = container    
         }
+
+        function newClipboard(id, callback = function(e){}) {
+            var clipboard = new ClipboardJS(id);
+            clipboard.on('success', function(e) {
+                callback(e);
+            });
+            return clipboard;
+        }
     //-->
     </script>
     <style type="text/css">
@@ -82,31 +95,79 @@
             padding: 0;
             position: relative;
             width: 100%;
-            height: 100vh;
-            font-family: serif;
+            height: 100%;
+            font-family: 'Roboto Slab', serif;
+            font-size: 10pt;
+            background-color: #fefefe;
+            color: #121222;
         }
         #container {
-            margin: auto;
-            width: 50%;
-            border: 3px solid lightseagreen;
+            border-radius: 7px;
+            margin: 8px auto 15px auto;
+            min-width: 320px;
+            width:auto;
+            max-width: 1024px;
+            min-height: 568px;
+            height:fit-content;
+            max-height: 1366px;
+            border: 3px dashed #cfcfcf;
             padding: 10px;
+            background-color: #f1fcff;
         }
         code {
-            font-family: monospace;
+            font-family: 'Fira Mono', monospace;
             font-size: 10pt;
             margin: auto;
             display: block;
             overflow: auto;
-            border: 1px solid #ddd;
-            background: #eee;
+            border: 1px dotted #000;
+            border-radius: 10px;
+            background: #ffffef;
             max-height: 400px;
-            margin: 5px 0px 0px 0px;
-            padding: 10px 0px 8px 10px;
+            margin: 10px 0px 0px 0px;
+        }
+        pre {
+            padding: 5px 0px 8px 5px;
+        }
+        div.url {
+            display:inline-block;
+            width: auto;
+        }
+        a, a:visited, div.url span#url-target {
+            display: inline-block;
+            margin: 7px 0px 0px 0px;
+            text-decoration: none;
+            color: #5f5fa5
+        }
+        a:hover, #url-target:hover, .url:hover .copy-url {
+            text-decoration: none;
+            color: #6a6aec;
+        }
+        .url {  
+          position: relative;
+            display: inline-block;
+        }
+        .url .copy-url {
+            visibility: hidden;
+            width: 130px;
+            background-color: #fefefe;
+            color: #5f5fa5;
+            text-alight: center;
+            border-radius: 6px;
+
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            left: 25%;
+            margin-left: -65px;
+        }
+        .url:hover .copy-url {
+            visibility: visible;
         }
         ol {
             list-style-type: katakana;
             margin: 0px;
-            padding: 0px 25px 0px 25px
+            padding: 0px 25px 0px 25px;
         }
         ol li {
             margin: 0px 0px 25px 0px;
@@ -119,27 +180,39 @@
             margin: 0;
         }
         ul li {
+            font-size: 11pt;
             padding: 0px 0px 0px 0px;
             margin: 10px 0px 0px 5px;
         }
-        .sans-serif {
-            font-family: sans-serif;
-        }
-        b {
+        .important {
             font-weight: bold;
-            font-size: 12pt;
+            font-family: 'Jaldi', sans-serif;
+            font-size: 13pt;
         }
         h1 {
-            font-size: 16pt;
+            font-family: 'Jaldi', sans-serif;
+            font-size: 15pt;
             margin: 5px 5px 20px 10px;
         }
         h2 {
+            font-family: 'Jaldi', sans-serif;
             font-size: 14pt;
             margin: 5px 5px 20px 10px;
         }
-        p.copy-button {
+        p.button-container {
+            font-family: 'Jaldi', sans-serif;
             margin: auto;
             text-align: center;
+        }
+        button {
+            font-size: 11pt;
+            border: 1px dotted #8ebfcf;
+            width:max-content;
+            border-radius: 10px;
+            padding: 5px 7px 3px 8px;
+            background-color: #feefef;
+            box-shadow: 3px 3px 2px 1px #cfefff;
+            margin: 3px 3px 2px 2px;
         }
     -->
     </style>
@@ -149,50 +222,47 @@
     <h1>Budget and Goal Generator</h1>
     <h2>Instructions:</h2>
     <ol>
-        <li><span class="sans-serif">NOTE: THIS IS SAMPLE DATA AND IS MEANT FOR YOU TO PLAY AROUND WITH</span></li>
-
-        <li>Get Postman, if you don' already have it here: <a href="https://www.getpostman.com/downloads/">https://www.getpostman.com/downloads/</a></li>
+        <li>Get Postman, if you don't already have it, download it here: <a href="https://www.getpostman.com/downloads/">https://www.getpostman.com/downloads/</a></li>
 
         <li>Open up Postman</li>
 
 
         <li>Take note of the number assigned to each role:
-        <code>{
-            "manager": "1",
-            "developer": "2",
-            "salesAnalyst": "3",
-        }</code></li>
+        <code><pre>{
+    "manager": "1",
+    "developer": "2",
+    "salesAnalyst": "3",
+}</pre></code></li>
 
         <li>Send the following data as a POST request to:
-        <u>http://jasonpoage.com:5000/stats</u></li>
+        <div class="url">
+            <span id="url-target">http://jasonpoage.com:5000/stats</span>
+            <div class="copy-url" id="copy-container">
+                <button id="copy-url" data-clipboard-action="copy" data-clipboard-target="#url-target" data-toggle="popover" title="Copied!">Select &amp; Copy</button>
+            </div>
+        </div></li>
 
-        <li><b>NOTE:</b>
+        <li><span class="important">NOTE:</span>
             <ul>
-                <li>THIS IS SAMPLE DATA AND IS MEANT FOR YOU TO PLAY AROUND WITH</li>
-                <li>RESULTS FROM THE SAMPLE DATA MAY NOT RESEMBLE ACTUAL DATA UNTIL YOU CUSTOMIZE IT
-                    <li>ALSO, Since the data was programmed using javascript objects and not JSON,
-                        you may experience unexpected behavior.</li>
-                    <li>Although I have made an effort to make this work as expected with JSON,</li>
-                    <li>Since I anticipate migrating to a database, it doesn't make sense to work out
-                     every single JSON-related kink.</li>
+                <li>This is sample data and is meant for you to play around with.</li>
+                <li>Results from the sample data may not resemble actual data until you customize it.</li>
+                <li>Be aware that the data was originally programmed using javascript objects and not JSON,
+                    there is a possibility you may experience unexpected behavior.</li>
+                <li>I have made an effort to make this work as expected with JSON.</li>
+                <li>Although, since I anticipate migrating to a database, it doesn't make sense to work out
+                    every single JSON-related kink.</li>
             </ul>
         </li>
 
-        <li>!!!Be sure to remove the comments!!!</l>
+        <li><span class="important">Be sure to remove the comments!!!</span></l>
     </ol>
 
     <p class="button-container">
         <button onclick="removeComments('copy-target')">Remove Comments</button>
-        <button class="copy-button" data-clipboard-action="copy" data-clipboard-target="#copy-target">Select &amp; Copy</button>
+        <button id="copy-text" data-clipboard-action="copy" data-clipboard-target="#copy-target">Select &amp; Copy</button>
     </p>
-    <script type="text/javascript">
-    <!--
-        var clipboard = new ClipboardJS('button.copy-button');
-    //-->
-    </script>
     <code id="copy-target" contenteditable="true">
-    <pre>
-{
+    <pre id="data">{
     "config": [
         {
             "averageDeal": "3500",
@@ -247,4 +317,31 @@
     ]
 }
 </pre></code>
-</div>
+    <p class="button-container">
+        <button id="generate">Generate</button>
+    </p>
+
+    <code><pre id="result"></pre></code>
+    </div>
+
+    <script type="text/javascript">
+    <!--
+        $(document).ready(function(){
+            $('[data-toggle="popover"]').popover();   
+            newClipboard('button#copy-text')
+            newClipboard('button#copy-url', function(e) {
+                e.clearSelection();
+            })
+            $("button#generate").click(function(){
+                $.post("http://jasonpoage.com/stats",
+                document.getElementById('data').innerHTML,
+                function(data,status){
+                    alert(status)
+                    document.getElementById('result').innerHTML = data;
+                });
+            });
+        });
+    //-->
+    </script>
+</body>
+</html>

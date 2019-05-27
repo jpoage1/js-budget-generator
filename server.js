@@ -1,5 +1,6 @@
 import express from 'express';
 import compression from 'compression';
+import https from 'https';
 
 const app = express();
 app.use(compression())
@@ -88,3 +89,10 @@ routes.forEach( (route, i) => {
 // Start listening
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
+https.createServer({
+	key: fs.readFileSync('server.key'),
+	cert: fs.readFileSync('server.cert')
+  }, app)
+  .listen(3000, function () {
+	console.log('Example app listening on port 3000! Go to https://localhost:3000/')
+  })
