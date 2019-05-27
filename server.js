@@ -7,10 +7,10 @@ const app = express();
 app.use(compression())
 app.use(express.json());
 app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
 	res.header("Access-Control-Allow-Origin", "http://localhost:3000");
 	res.header("Access-Control-Allow-Origin", "https://jasonpoage.com:80");
+	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
@@ -92,11 +92,9 @@ routes.forEach( (route, i) => {
 const port = process.env.PORT || 5000;
 const sshPort = port + 1;
 app.listen(port, () => console.log(`Listening on port ${port}`));
-/*
 https.createServer({
 	key: fs.readFileSync('server.key'),
 	cert: fs.readFileSync('server.cert')
 }, app).listen(sshPort, function () {
 	console.log(`Listening on port ${sshPort}`);
 });
-*/

@@ -7,9 +7,9 @@ export const routes = [
 			post: async (req, res) => {
                 const { config, staff } = req.body
                 if ( !Array.isArray(config) || !Array.isArray(staff) ) {
-                    res.send("Error: input must be of type 'Array'.");
-                    console.log(config, staff)
-                }
+					res.send("Error: input must be of type 'Array'.");
+					return;
+				}
                 res.json(stats(config, staff));
 			},
 		},

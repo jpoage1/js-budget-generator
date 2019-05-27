@@ -9,76 +9,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+    <script src="fetchIt.js"></script>
     <script type="text/javascript">
     <!--
-        function repeat(n, action) {
-            let accumular = '';
-            for (let i = 0; i < n; i++) {
-                accumular+= action(i);
-            }
-            return accumular;
+        const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
+        function removeComments(json) {
+            return json.split('\n').map(line => line.trim()).filter(line => line.indexOf('//') !== 0).join('\n');
         }
-        function lesserValue(x, y, z) {
-            const i = x.indexOf(y);
-            const j = x.indexOf(z);
-            return i === -1
-            ? ( j === -1 ? -1 : z )
-            : ( j === -1 ? y : 
-                i < j ? y : z
-            )
+        function formatJSON(json) {
+            return JSON.stringify(json, null, 4);
         }
-        function locateFirst(...needle) {
-            return function(x) {
-                return needle.reduce( (y, z) => {
-                    return lesserValue(x, y, z);
-                });
-            }
+        function dataFormatter(json) {
+            return pipe(removeComments, JSON.parse)(json)
         }
-        function changeLineBuffer(n) {
-            return {
-                '{': 1,
-                '[': 1,
-                '}': -1,
-                ']': -1,
-                '-1': 0,
-            }[n]
+        function prepareJSON(id) {
+            return dataFormatter(document.getElementById(id).innerHTML);
         }
-        function removeComments(id) {
-            let n = 0;
-            container = document.getElementById(id).innerHTML
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.indexOf('//') !== 0)
-            .map(line => {
-                let location = 0;
-                let i = 0;
-                let openNest, closeNest, first, cbl;
-                let nextPart = line;
-                let again = false;
-                let before = true;
-                let lb = 0;
-                while ( location !== -1 ) {
-                    first = locateFirst('{','}','[',']')(nextPart);
-                    location = nextPart.indexOf(first);
-                    nextPart = nextPart.substr(location, nextPart.length-1);
-                    before = before ? i === 0 : false;
-                    cbl = changeLineBuffer(first);
-                    lb = lb === 0 ? cbl : lb;
-                    n = again !== undefined && first !== again ? cbl+n : n;
-                    again = first;
-                    i = 1
-                    if ( location === -1 ) {
-                        break;
-                    }
-                }
-                const j = before || lb < 0 ? n : n-1;
-                linePrefix = repeat(j, _ => '    ');
-                return linePrefix + line;
-            } )
-            .join('\n');
-            document.getElementById(id).innerHTML = container    
+        function formatData(id) {
+            document.getElementById(id).innerHTML = prepareJSON(id);
         }
-
         function newClipboard(id, callback = function(e){}) {
             var clipboard = new ClipboardJS(id);
             clipboard.on('success', function(e) {
@@ -108,13 +57,12 @@
             width:auto;
             max-width: 1024px;
             min-height: 568px;
-            height:fit-content;
-            max-height: 1366px;
             border: 3px dashed #cfcfcf;
             padding: 10px;
             background-color: #f1fcff;
         }
         code {
+            white-space:pre-wrap;
             font-family: 'Fira Mono', monospace;
             font-size: 10pt;
             margin: auto;
@@ -123,10 +71,9 @@
             border: 1px dotted #000;
             border-radius: 10px;
             background: #ffffef;
+            height:auto;
             max-height: 400px;
             margin: 10px 0px 0px 0px;
-        }
-        pre {
             padding: 5px 0px 8px 5px;
         }
         div.url {
@@ -228,11 +175,11 @@
 
 
         <li>Take note of the number assigned to each role:
-        <code><pre>{
+        <code>{
     "manager": "1",
     "developer": "2",
     "salesAnalyst": "3",
-}</pre></code></li>
+}</code></li>
 
         <li>Send the following data as a POST request to:
         <div class="url">
@@ -253,16 +200,13 @@
                     every single JSON-related kink.</li>
             </ul>
         </li>
-
-        <li><span class="important">Be sure to remove the comments!!!</span></l>
     </ol>
 
     <p class="button-container">
-        <button onclick="removeComments('copy-target')">Remove Comments</button>
-        <button id="copy-text" data-clipboard-action="copy" data-clipboard-target="#copy-target">Select &amp; Copy</button>
+        <button onclick="formatData('data')">Format JSON</button>
+        <button id="copy-data" data-clipboard-action="copy" data-clipboard-target="#data">Select &amp; Copy</button>
     </p>
-    <code id="copy-target" contenteditable="true">
-    <pre id="data">{
+    <code contenteditable="true" id="data">{
     "config": [
         {
             "averageDeal": "3500",
@@ -315,29 +259,27 @@
             "hours": "40"
         }
     ]
-}</pre></code>
-    <p class="button-container">
-        <button id="generate">Generate</button>
-    </p>
+}</code>
+        <p class="button-container">
+            <button id="generate">Generate</button>
+        </p>
 
-    <code><pre id="result"></pre></code>
-    </div>
+        <code id="result"></code>
+        </div>
 
-    <script type="text/javascript">
-    <!--
-        $(document).ready(function(){
-            $('[data-toggle="popover"]').popover();   
-            newClipboard('button#copy-text')
-            newClipboard('button#copy-url', function(e) {
-                e.clearSelection();
-            })
-            $("button#generate").click(function(){
-                $.post("https://jasonpoage.com/stats",
-                document.getElementById('data').innerHTML,
-                function(data,status){
-                    alert(status)
-                    document.getElementById('result').innerHTML = data;
-                });
+        <script type="text/javascript">
+        <!--
+            $(document).ready(function(){
+                $('[data-toggle="popover"]').popover();   
+                newClipboard('button#copy-data')
+                newClipboard('button#copy-url', function(e) {
+                    e.clearSelection();
+                })
+                $("button#generate").click(function(){
+                postIt('https://127.0.0.1:5001/stats',  prepareJSON('data'))
+                .then( data => {
+                    document.getElementById('result').innerHTML = formatJSON(data);
+                })
             });
         });
     //-->
