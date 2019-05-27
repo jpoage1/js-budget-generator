@@ -23,10 +23,10 @@ const g = function(config, staff, x = null) {
             to be in business at the MINIMUM
         */
        ...config,
-        prospects: _=> g(config, staff, 'leads') / prospectToLead,
-        leads: _=> g(config, staff, 'conversions') / leadToQualified,
-        conversions: _=> g(config, staff, 'deals') / qualifiedToSale,
-        deals: _=> deals(annualRevenue, averageDeal),
+        prospects: _=> Math.ceil(g(config, staff, 'leads') / prospectToLead),
+        leads: _=> Math.ceil(g(config, staff, 'conversions') / leadToQualified),
+        conversions: _=> Math.ceil(g(config, staff, 'deals') / qualifiedToSale),
+        deals: _=> Math.ceil(deals(annualRevenue, averageDeal)),
         revenuePerDev: _=> {
             const noOfDevs = staffByRole(staff, developer).length;
             return annualRevenue / noOfDevs
@@ -35,7 +35,7 @@ const g = function(config, staff, x = null) {
         costPerDev: _=> costPerEmployee(staff, developer),
         costPerSDR: _=> annualRevenue * sdrCommission, // calculate average commission rate
         revenuePerSDR: _=> {
-            const sdrs = staffByRole(staff, 'sdrs');
+            const sdrs = staffByRole(staff, sdr);
             return annualRevenue / sdrs.length;
         },
         profit: _=> {
