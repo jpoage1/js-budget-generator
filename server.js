@@ -91,7 +91,7 @@ routes.forEach( (route, i) => {
 // Start listening
 const port = process.env.PORT || 5000;
 const sshPort = port + 1;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+//app.listen(port, () => console.log(`Listening on port ${port}`));
 https.createServer({
 	key: fs.readFileSync('server.key'),
 	cert: fs.readFileSync('server.cert')
