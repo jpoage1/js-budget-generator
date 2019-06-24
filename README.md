@@ -1,1 +1,1 @@
-# inmogr-budget
+# js-budget-generator
