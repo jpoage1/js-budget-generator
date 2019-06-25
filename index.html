@@ -75,65 +75,13 @@
             max-height: 400px;
             margin: 10px 0px 0px 0px;
             padding: 5px 0px 8px 5px;
-        }
-        div.url {
-            display:inline-block;
-            width: auto;
-        }
-        a, a:visited, div.url span#url-target {
-            display: inline-block;
-            margin: 7px 0px 0px 0px;
-            text-decoration: none;
-            color: #5f5fa5
-        }
-        a:hover, #url-target:hover, .url:hover .copy-url {
-            text-decoration: none;
-            color: #6a6aec;
-        }
-        .url {  
-          position: relative;
-            display: inline-block;
-        }
-        .url .copy-url {
-            visibility: hidden;
-            width: 130px;
-            background-color: #fefefe;
-            color: #5f5fa5;
-            text-alight: center;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 1;
-            top: 100%;
-            left: 25%;
-            margin-left: -65px;
-        }
-        .url:hover .copy-url {
-            visibility: visible;
-        }
-        ol {
-            list-style-type: katakana;
-            margin: 0px;
-            padding: 0px 25px 0px 25px;
-        }
-        ol li {
-            margin: 0px 0px 25px 0px;
-            padding: 0px 5px 0px 0px;
-            font-size: 12pt;
-        }
-        ul {
-            width: 90%;
-            padding: 0px 5px 0px 25px;
+        }dding: 0px 5px 0px 25px;
             margin: 0;
         }
-        ul li {
+        p {
             font-size: 11pt;
             padding: 0px 0px 0px 0px;
             margin: 10px 0px 0px 5px;
-        }
-        .important {
-            font-weight: bold;
-            font-family: 'Jaldi', sans-serif;
-            font-size: 13pt;
         }
         h1 {
             font-family: 'Jaldi', sans-serif;
@@ -166,14 +114,13 @@
 <body>
     <div id="container">
     <h1>Budget and Goal Generator</h1>
-    <ol>
-        <li>Take note of the number assigned to each role:
+    <p>Take note of the number assigned to each role:
         <code>{
     "manager": "1",
     "developer": "2",
     "salesAnalyst": "3",
 }</code></li>
-    </ol>
+    </p>
     <p class="button-container">
         <button onclick="formatData('data')">Format JSON</button>
         <button id="copy-data" data-clipboard-action="copy" data-clipboard-target="#data">Select &amp; Copy</button>
