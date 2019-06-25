@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="README/reset.css" />
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Jaldi|Roboto+Slab&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-    <script src="fetchIt.js"></script>
+    <script src="bundle.js"></script>
     <script type="text/javascript">
     <!--
         const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
@@ -266,11 +266,8 @@
                 newClipboard('button#copy-url', function(e) {
                     e.clearSelection();
                 })
-                $("button#generate").click(function(){
-                postIt('https://127.0.0.1:5001/stats',  prepareJSON('data'))
-                .then( data => {
-                    document.getElementById('result').innerHTML = formatJSON(data);
-                })
+            $("button#generate").click(function(){
+                document.getElementById('result').innerHTML = stats(...data);
             });
         });
     //-->
