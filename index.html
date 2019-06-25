@@ -26,7 +26,7 @@
             return dataFormatter(document.getElementById(id).innerHTML);
         }
         function formatData(id) {
-            document.getElementById(id).innerHTML = prepareJSON(id);
+            document.getElementById(id).innerHTML = formatJSON(prepareJSON(id));
         }
         function newClipboard(id, callback = function(e){}) {
             var clipboard = new ClipboardJS(id);
@@ -246,7 +246,7 @@
                     e.clearSelection();
                 })
             $("button#generate").click(function(){
-                document.getElementById('result').innerHTML = stats(...data);
+                document.getElementById('result').innerHTML = stats(...formatData(data));
             });
         });
     //-->
