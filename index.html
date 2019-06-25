@@ -239,12 +239,8 @@
         </div>
         <script type="text/javascript">
         <!--
-            $(document).ready(function(){
-                $('[data-toggle="popover"]').popover();   
+            $(document).ready(function(){ 
                 newClipboard('button#copy-data')
-                newClipboard('button#copy-url', function(e) {
-                    e.clearSelection();
-                })
             $("button#generate").click(function(){
                 document.getElementById('result').innerHTML = stats(...formatData(data));
             });
